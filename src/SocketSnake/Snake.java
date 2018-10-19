@@ -30,7 +30,7 @@ public class Snake {
     }
 
     public void setDirection(Direction newDirection) {
-        if (!currentDirection.getValue()
+        if (controllerDirection == null && !currentDirection.getValue()
                 .equals(MathPoint.multiply(newDirection.getValue(), -1))) {
             controllerDirection = newDirection;
         }
@@ -39,6 +39,7 @@ public class Snake {
     public void moveSnake() {
         if (controllerDirection != null) {
             currentDirection = controllerDirection;
+            controllerDirection = null;
         }
         Point moveVector = currentDirection.getValue();
         moveVector = MathPoint.multiply(moveVector, scale);
