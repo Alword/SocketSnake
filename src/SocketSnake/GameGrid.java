@@ -1,5 +1,7 @@
 package SocketSnake;
 
+import SnakeClient.Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,8 +11,8 @@ import java.util.ArrayList;
 public class GameGrid extends JPanel implements ActionListener {
     //geometry
     private final int SCALE = 16;
-    private final int FIELD_SIZE = 32 * SCALE;
-    private final int CELL_COUNT = FIELD_SIZE / SCALE;
+    private final int CELL_COUNT = 32;
+    private final int FIELD_SIZE = CELL_COUNT * SCALE;
     private final int ALL_DOTS = CELL_COUNT * CELL_COUNT;
 
     //time
@@ -22,11 +24,13 @@ public class GameGrid extends JPanel implements ActionListener {
 
     //Snake
     Snake snake;
+    Client snakeClient = null;
 
     GameGrid() {
+        snakeClient = new Client(this);
         snake = new Snake(SCALE);
         setBackground(Color.black);
-        createApple();
+        createApple(new Point());
         initGame();
         addKeyListener(new GameKeyListener(snake));
         setFocusable(true);
@@ -53,8 +57,12 @@ public class GameGrid extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (snake.isInGame) {
+            g.drawRect(0, 0, FIELD_SIZE + SCALE, FIELD_SIZE + SCALE);
             drawApple(g);
             drawSnake(g);
+        } else {
+            g.setColor(Color.white);
+            g.drawString("Game Over", 545 / 2 - 67/2, FIELD_SIZE / 2);
         }
     }
 
@@ -76,7 +84,7 @@ public class GameGrid extends JPanel implements ActionListener {
         g.setColor(oldColor);
     }
 
-    private void createApple() {
+    public void createApple(Point point) {
         int x = (int) (Math.random() * CELL_COUNT - 1) * SCALE;
         int y = (int) (Math.random() * CELL_COUNT - 1) * SCALE;
         foodPoint = new Point(x, y);
@@ -84,7 +92,7 @@ public class GameGrid extends JPanel implements ActionListener {
 
     private void checkApple(Snake snake) {
         if (snake.checkApple(foodPoint)) {
-            createApple();
+            //TODO send createApple();
         }
     }
 
@@ -102,7 +110,7 @@ public class GameGrid extends JPanel implements ActionListener {
         ArrayList<Point> snakeBody = snake.GetBody();
 
         for (int i = 0; i < snake.size() - 1; i++) {
-            if ( snake.snakeHeadGet().equals(snakeBody.get(i))) {
+            if (snake.snakeHeadGet().equals(snakeBody.get(i))) {
                 snake.Kill();
             }
         }
