@@ -5,7 +5,7 @@ import java.awt.*;
 public class RawPointData {
 
     public static String applePoint(Point point) {
-        return "a" + point.x + ":" + point.y + ";";
+        return "a" + point.x + ":" + point.y;
     }
 
     public static String initSnake(int snakeID, Point[] points) {

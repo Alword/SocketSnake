@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class SocketListener implements Runnable, ActionListener {
 
     Host host = null;
+
     public SocketListener(Host host) {
         this.host = host;
     }
@@ -22,15 +23,17 @@ public class SocketListener implements Runnable, ActionListener {
         for (int i = 0; i < lockSockets.size(); i++) {
             try {
                 System.out.println("Слушаю клиента" + i);
+
                 Socket socket = lockSockets.get(i);
-                Scanner input = null;
-                input = new Scanner(socket.getInputStream());
+                Scanner input = new Scanner(socket.getInputStream());
                 String next = input.next();
                 if (next != null) {
                     host.data.set(i, Integer.parseInt(next));
                 }
+
             } catch (IOException e1) {
                 e1.printStackTrace();
+                host.sockets.remove(lockSockets.get(i));
             }
         }
     }

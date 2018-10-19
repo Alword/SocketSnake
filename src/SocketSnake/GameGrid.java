@@ -62,7 +62,7 @@ public class GameGrid extends JPanel implements ActionListener {
             drawSnake(g);
         } else {
             g.setColor(Color.white);
-            g.drawString("Game Over", 545 / 2 - 67/2, FIELD_SIZE / 2);
+            g.drawString("Game Over", 545 / 2 - 67 / 2, FIELD_SIZE / 2);
         }
     }
 
@@ -85,9 +85,7 @@ public class GameGrid extends JPanel implements ActionListener {
     }
 
     public void createApple(Point point) {
-        int x = (int) (Math.random() * CELL_COUNT - 1) * SCALE;
-        int y = (int) (Math.random() * CELL_COUNT - 1) * SCALE;
-        foodPoint = new Point(x, y);
+        foodPoint = MathPoint.multiply(point, SCALE);
     }
 
     private void checkApple(Snake snake) {

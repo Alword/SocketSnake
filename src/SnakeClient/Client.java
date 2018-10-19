@@ -17,7 +17,7 @@ public class Client {
         gameGrid = grid;
 
         try {
-            Socket socket = new Socket("127.0.0.1", 9800);
+            Socket socket = new Socket("127.0.0.1", 9870);
             DataSender keyListener = new DataSender(socket);
             new Thread(keyListener).start();
 
@@ -40,7 +40,7 @@ public class Client {
 
         if (rawData.contains("a")) {
             rawData = rawData.substring(1);
-            String[] pointStrings = rawData.split(";");
+            String[] pointStrings = rawData.split(":");
             Point applePoint = new Point(Integer.parseInt(pointStrings[0]), Integer.parseInt(pointStrings[1]));
             gameGrid.createApple(applePoint);
         }

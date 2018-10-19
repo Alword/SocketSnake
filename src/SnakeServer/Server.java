@@ -22,7 +22,7 @@ public class Server {
         new Thread(listener).start();
 
         try {
-            ServerSocket serverSocket = new ServerSocket(9800);
+            ServerSocket serverSocket = new ServerSocket(9870);
             while (true) {
                 Socket socket = serverSocket.accept();
                 host.addSockets(socket);

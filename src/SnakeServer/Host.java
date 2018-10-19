@@ -38,7 +38,7 @@ public class Host implements Runnable, ActionListener {
         ArrayList<Socket> lockSockets = (ArrayList<Socket>) sockets.clone();
 
         //PrepareData
-        Point x = new Point((int) (Math.random() * 10), (int) (Math.random() * 10));
+        Point x = new Point((int) (Math.random() * 32), (int) (Math.random() * 32));
         String Data = RawPointData.applePoint(x);
 
         for (int i = 0; i < lockSockets.size(); i++) {
@@ -48,6 +48,7 @@ public class Host implements Runnable, ActionListener {
                 output = new PrintWriter(socket.getOutputStream());
             } catch (IOException e1) {
                 e1.printStackTrace();
+                sockets.remove(lockSockets.get(i));
             }
             output.println(Data);
             output.flush();
