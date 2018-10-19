@@ -6,7 +6,7 @@ class MathPoint {
         return new java.awt.Point(p1.x + p2.x, p1.y + p2.y);
     }
 
-    static java.awt.Point myltiply(java.awt.Point p1, int scalar) {
+    static java.awt.Point multiply(java.awt.Point p1, int scalar) {
         return new java.awt.Point(p1.x * scalar, p1.y * scalar);
     }
 }
