@@ -3,8 +3,8 @@ package SnakeServer;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Console;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -22,13 +22,13 @@ public class SocketListener implements Runnable, ActionListener {
         ArrayList<Socket> lockSockets = (ArrayList<Socket>) host.sockets.clone();
         for (int i = 0; i < lockSockets.size(); i++) {
             try {
-                System.out.println("Слушаю клиента" + i);
-
                 Socket socket = lockSockets.get(i);
-                Scanner input = new Scanner(socket.getInputStream());
-                String next = input.next();
-                if (next != null) {
-                    host.data.set(i, Integer.parseInt(next));
+                Scanner scanner = new Scanner(socket.getInputStream());
+                //GetCommands
+                if (scanner.hasNextInt()) {
+                    int cmd = scanner.nextInt();
+                    System.out.println(cmd);
+                    host.gameInfo.sendCommand(i, cmd);
                 }
 
             } catch (IOException e1) {
@@ -40,7 +40,7 @@ public class SocketListener implements Runnable, ActionListener {
 
     @Override
     public void run() {
-        Timer sender = new Timer(host.DELAY, this);
+        Timer sender = new Timer(host.DELAY / 2, this);
         sender.start();
     }
 }

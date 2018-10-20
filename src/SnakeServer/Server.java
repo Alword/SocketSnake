@@ -1,19 +1,12 @@
 package SnakeServer;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Server {
 
+    //StartConnection
     public static void main(String[] args) {
         Host host = new Host();
         SocketListener listener = new SocketListener(host);
@@ -31,5 +24,4 @@ public class Server {
             e1.printStackTrace();
         }
     }
-
 }

@@ -1,15 +1,16 @@
 package SocketSnake;
 
-import SocketSnake.Enums.Direction;
+import SnakeServer.Enums.Direction;
+import SnakeServer.PlayerInfo;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 class GameKeyListener extends KeyAdapter {
 
-    private Snake snake;
+    private PlayerInfo snake;
 
-    public GameKeyListener(Snake snake) {
+    public GameKeyListener(PlayerInfo snake) {
         this.snake = snake;
     }
 

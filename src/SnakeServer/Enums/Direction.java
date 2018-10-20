@@ -1,4 +1,4 @@
-package SocketSnake.Enums;
+package SnakeServer.Enums;
 
 import java.awt.*;
 

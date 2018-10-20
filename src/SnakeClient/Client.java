@@ -11,19 +11,21 @@ import java.util.Scanner;
 
 public class Client {
 
-    static GameGrid gameGrid = null;
+    private GameGrid gameGrid = null;
+    private DataSender dataSender = null;
+    private DataListener dataListener = null;
 
     public Client(GameGrid grid) {
         gameGrid = grid;
 
         try {
             Socket socket = new Socket("127.0.0.1", 9870);
-            DataSender keyListener = new DataSender(socket);
-            new Thread(keyListener).start();
+            dataSender = new DataSender(socket);
+            new Thread(dataSender).start();
 
             Scanner scanner = new Scanner(socket.getInputStream());
-            DataListener listener = new DataListener(scanner);
-            new Thread(listener).start();
+            dataListener = new DataListener(this,scanner);
+            new Thread(dataListener).start();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -32,7 +34,7 @@ public class Client {
         }
     }
 
-    public static void ParseCommand(String rawData) {
+    public void getCommand(String rawData) {
 
         if (rawData == null) {
             return;
@@ -48,6 +50,11 @@ public class Client {
         }
         if (rawData.contains("u")) {
         }
+        gameGrid.actionPerformed();
+    }
+
+    public void sendCommand(int command) {
+        dataSender.sendCommand(command);
     }
 }
 

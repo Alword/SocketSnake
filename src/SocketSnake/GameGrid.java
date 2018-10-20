@@ -1,6 +1,8 @@
 package SocketSnake;
 
 import SnakeClient.Client;
+import SnakeServer.MathPoint;
+import SnakeServer.PlayerInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,27 +10,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class GameGrid extends JPanel implements ActionListener {
+public class GameGrid extends JPanel {
     //geometry
     private final int SCALE = 16;
     private final int CELL_COUNT = 32;
     private final int FIELD_SIZE = CELL_COUNT * SCALE;
     private final int ALL_DOTS = CELL_COUNT * CELL_COUNT;
 
-    //time
-    private final int DELAY = 250;
-    private Timer timer;
-
     //food
     private Point foodPoint = null;
 
     //Snake
-    Snake snake;
+    PlayerInfo snake;
     Client snakeClient = null;
 
     GameGrid() {
-        snakeClient = new Client(this);
-        snake = new Snake(SCALE);
         setBackground(Color.black);
         createApple(new Point());
         initGame();
@@ -37,12 +33,11 @@ public class GameGrid extends JPanel implements ActionListener {
     }
 
     private void initGame() {
-        timer = new Timer(DELAY, this);
-        timer.start();
+        snakeClient = new Client(this);
+        snake = new PlayerInfo(SCALE);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed() {
         if (snake.isInGame) {
             snake.moveSnake();
             checkApple(snake);
@@ -88,9 +83,9 @@ public class GameGrid extends JPanel implements ActionListener {
         foodPoint = MathPoint.multiply(point, SCALE);
     }
 
-    private void checkApple(Snake snake) {
+    private void checkApple(PlayerInfo snake) {
         if (snake.checkApple(foodPoint)) {
-            //TODO send createApple();
+            snakeClient.sendCommand(4);
         }
     }
 

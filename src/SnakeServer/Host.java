@@ -1,5 +1,7 @@
 package SnakeServer;
 
+import javafx.scene.transform.Scale;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,23 +10,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Scanner;
 
 public class Host implements Runnable, ActionListener {
     public final int DELAY = 250;
+    GameInfo gameInfo = null;
 
     ArrayList<Socket> sockets;
-    ArrayList<Integer> data;
 
     public Host() {
         sockets = new ArrayList<>();
-        data = new ArrayList<>();
+        gameInfo = new GameInfo();
     }
 
     public void addSockets(Socket socket) {
         sockets.add(socket);
-        data.add(0);
+        gameInfo.playersInfo.add(new PlayerInfo(16));
     }
 
     @Override
@@ -37,10 +37,6 @@ public class Host implements Runnable, ActionListener {
     public void actionPerformed(ActionEvent e) {
         ArrayList<Socket> lockSockets = (ArrayList<Socket>) sockets.clone();
 
-        //PrepareData
-        Point x = new Point((int) (Math.random() * 32), (int) (Math.random() * 32));
-        String Data = RawPointData.applePoint(x);
-
         for (int i = 0; i < lockSockets.size(); i++) {
             Socket socket = lockSockets.get(i);
             PrintWriter output = null;
@@ -50,9 +46,14 @@ public class Host implements Runnable, ActionListener {
                 e1.printStackTrace();
                 sockets.remove(lockSockets.get(i));
             }
-            output.println(Data);
+            output.println(TickRawData());
             output.flush();
         }
     }
-}
 
+    public String TickRawData() {
+        //PrepareData
+        String Data = RawPointData.applePoint(gameInfo.foodPosition);
+        return Data;
+    }
+}

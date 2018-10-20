@@ -1,20 +1,18 @@
-package SocketSnake;
+package SnakeServer;
 
-import SocketSnake.Enums.Direction;
+import SnakeServer.Enums.Direction;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Snake {
-
+public class PlayerInfo {
     public boolean isInGame = true;
     private Direction currentDirection;
     private Direction controllerDirection;
     private ArrayList<Point> snakePoints = null;
     private int scale = 0;
 
-    Snake(int scale) {
+    public PlayerInfo(int scale) {
         currentDirection = Direction.Right;
         this.scale = scale;
         initSnake();
