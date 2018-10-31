@@ -1,6 +1,8 @@
 package SocketSnake;
 
-import javafx.scene.transform.Scale;
+import SnakeClient.Client;
+import SnakeServer.MathPoint;
+import SnakeServer.PlayerInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,99 +10,55 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class GameGrid extends JPanel implements ActionListener {
+public class GameGrid extends JPanel {
     //geometry
     private final int SCALE = 16;
-    private final int FIELD_SIZE = 32 * SCALE;
-    private final int CELL_COUNT = FIELD_SIZE / SCALE;
+    private final int CELL_COUNT = 32;
+    private final int FIELD_SIZE = CELL_COUNT * SCALE;
     private final int ALL_DOTS = CELL_COUNT * CELL_COUNT;
-
-    //time
-    private final int DELAY = 250;
-    private Timer timer;
-
-    private Image snakeSkin;
-    private Image food;
 
     //food
     private Point foodPoint = null;
 
     //Snake
-    private ArrayList<Point> snakePoints = null;
-    private int snakeSize = 0;
-
-    //enum
-    private boolean isLeft = false;
-    private boolean isRight = true;
-    private boolean isUp = false;
-    private boolean isDown = false;
-    private boolean isIngame = true;
+    PlayerInfo snake;
+    Client snakeClient = null;
 
     GameGrid() {
         setBackground(Color.black);
-        createApple();
+        createApple(new Point());
         initGame();
+        addKeyListener(new GameKeyListener(snake));
+        setFocusable(true);
     }
 
     private void initGame() {
-        snakeSize = 3;
-        snakePoints = new ArrayList<>(snakeSize);
-
-        for (int i = 0; i < snakeSize; i++) {
-            int x = (3 + i) * SCALE;
-            int y = FIELD_SIZE / 2;
-            snakePoints.add(new Point(x, y));
-        }
-
-        timer = new Timer(DELAY, this);
-        timer.start();
+        snakeClient = new Client(this);
+        snake = new PlayerInfo(SCALE);
     }
 
-    private void createApple() {
-        int x = (int) (Math.random() * CELL_COUNT - 1) * SCALE;
-        int y = (int) (Math.random() * CELL_COUNT - 1) * SCALE;
-        foodPoint = new Point(x, y);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (isIngame) {
-            moveSnake();
+    public void actionPerformed() {
+        if (snake.isInGame) {
+            snake.moveSnake();
+            checkApple(snake);
+            checkWalls();
+            checkSnakes();
         }
         repaint();
     }
 
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (isIngame) {
+        if (snake.isInGame) {
+            g.drawRect(0, 0, FIELD_SIZE + SCALE, FIELD_SIZE + SCALE);
             drawApple(g);
             drawSnake(g);
-        }
-    }
-
-    private void moveSnake() {
-        int last = snakePoints.size() - 1;
-
-        Point moveVector;
-
-        //switch () enum
-        if (isUp) {
-            moveVector = new Point(0, 1);
-        } else if (isRight) {
-            moveVector = new Point(1, 0);
-        } else if (isDown) {
-            moveVector = new Point(0, -1);
-        } else if (isLeft) {
-            moveVector = new Point(-1, 0);
         } else {
-            moveVector = new Point();
+            g.setColor(Color.white);
+            g.drawString("Game Over", 545 / 2 - 67 / 2, FIELD_SIZE / 2);
         }
-
-        moveVector = MathPoint.myltiply(moveVector, SCALE);
-        Point nextPoint = MathPoint.add(snakePoints.get(last), moveVector);
-        snakePoints.add(nextPoint);
-        snakePoints.remove(0);
     }
 
     private void drawApple(Graphics g) {
@@ -108,9 +66,8 @@ public class GameGrid extends JPanel implements ActionListener {
     }
 
     private void drawSnake(Graphics g) {
-
         for (Point point :
-                snakePoints) {
+                snake.GetBody()) {
             drawRect(g, Color.white, point);
         }
     }
@@ -120,5 +77,45 @@ public class GameGrid extends JPanel implements ActionListener {
         g.setColor(newColor);
         g.drawRect(point.x, point.y, SCALE, SCALE);
         g.setColor(oldColor);
+    }
+
+    public void createApple(Point point) {
+        foodPoint = MathPoint.multiply(point, SCALE);
+    }
+
+    private void checkApple(PlayerInfo snake) {
+        if (snake.checkApple(foodPoint)) {
+            snakeClient.sendCommand(4);
+        }
+    }
+
+    private void checkWalls() {
+        Point snakeHead = snake.snakeHeadGet();
+        if (snakeHead.x > FIELD_SIZE
+                || snakeHead.y > FIELD_SIZE
+                || snakeHead.x < 0
+                || snakeHead.y < 0) {
+            snake.Kill();
+        }
+    }
+
+    private void checkSnakes() {
+        ArrayList<Point> snakeBody = snake.GetBody();
+
+        for (int i = 0; i < snake.size() - 1; i++) {
+            if (snake.snakeHeadGet().equals(snakeBody.get(i))) {
+                snake.Kill();
+            }
+        }
+    }
+
+    private void setSnake() {
+        Point snakeHead = snake.snakeHeadGet();
+        if (snakeHead.x > FIELD_SIZE
+                || snakeHead.y > FIELD_SIZE
+                || snakeHead.x < 0
+                || snakeHead.y < 0) {
+            snake.Kill();
+        }
     }
 }
